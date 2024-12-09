@@ -16,7 +16,7 @@
     npm install
     nodemon app.js
 ```
-* Backend run on http://localhost:5000/api/data/Products
+* Backend run on http://localhost:5000/api/data/userss
 ```bash
     cd frontend
     npm install

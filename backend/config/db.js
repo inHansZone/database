@@ -1,7 +1,7 @@
 const sql = require('msnodesqlv8');
 
 const connectionString = ///////////////// thay 'localhost' 'test' thành server, tên database
-  'Driver={ODBC Driver 17 for SQL Server};Server=localhost;Database=test;Trusted_Connection=yes;';
+  'Driver={ODBC Driver 17 for SQL Server};Server=localhost;Database=ecommerce;Trusted_Connection=yes;';
 
 /**
  * Opens a database connection.

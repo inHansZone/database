@@ -61,17 +61,17 @@ const insertDataIntoTable = async (tableName, data) => {
 /**
  * Updates a row in a specified table by its ID.
  * @param {string} tableName - The name of the table to update.
- * @param {number} id - The ID of the row to update.
+ * @param {number} users_id - The ID of the row to update.
  * @param {Object} updatedData - The updated data.
  * @returns {Promise} Resolves with a success message or rejects with an error.
  */
-const updateRowInTable = async (tableName, id, updatedData) => {
+const updateRowInTable = async (tableName, users_id, updatedData) => {
   // Create the SET clause for the SQL query
   const setClause = Object.entries(updatedData)
     .map(([key, value]) => `${key} = '${value}'`) // Assuming all values are strings
     .join(', ');
 
-  const query = `UPDATE ${tableName} SET ${setClause} WHERE id = ${id}`;
+  const query = `UPDATE ${tableName} SET ${setClause} WHERE users_id = ${users_id}`;
 
   try {
     const conn = await connectToDatabase();
@@ -91,8 +91,8 @@ const updateRowInTable = async (tableName, id, updatedData) => {
   }
 };
 
-const deleteDataFromTable = async (tableName, id) => {
-  const query = `DELETE FROM ${tableName} WHERE id = ${id}`;
+const deleteDataFromTable = async (tableName, users_id) => {
+  const query = `DELETE FROM ${tableName} WHERE users_id = ${users_id}`;
 
   try {
       const conn = await connectToDatabase();
