@@ -11,7 +11,6 @@ const ProductList = () => {
         stock: ''
     });
 
-    // State for new product form
     const [newProduct, setNewProduct] = useState({
         name: '',
         description: '',
@@ -20,13 +19,11 @@ const ProductList = () => {
     });
 
     useEffect(() => {
-        // Fetch all products
         axios.get('http://localhost:5000/api/data/Products')
             .then(response => setProducts(response.data))
             .catch(error => console.error('Error fetching products:', error));
     }, []);
 
-    // Handle edit action
     const handleEdit = (product) => {
         setEditProduct(product);
         setUpdatedData({
@@ -49,20 +46,12 @@ const ProductList = () => {
         }
     };
 
-    // Handle delete action
     const handleDelete = (id) => {
         axios.delete(`http://localhost:5000/api/data/Products/${id}`)
-            .then(response => {
-                alert('Product deleted successfully');
-                setProducts(products.filter(product => product.id !== id));
-            })
-            .catch(error => {
-                console.error('Error deleting product:', error);
-                alert('Failed to delete product');
-            });
+            .then(() => setProducts(products.filter(product => product.id !== id)))
+            .catch(error => console.error('Error deleting product:', error));
     };
 
-    // Handle new product form change
     const handleNewProductChange = (e) => {
         const { name, value } = e.target;
         setNewProduct((prevState) => ({
@@ -71,46 +60,28 @@ const ProductList = () => {
         }));
     };
 
-    // Handle new product insertion
-    // const handleInsert = async () => {
-    //     try {
-    //         const response = await axios.post('http://localhost:5000/api/data/Products', newProduct);
-    //         console.log('New product added:', response.data);
-    //         setProducts([...products, { ...newProduct, id: response.data.id }]); // Add the new product to the list
-    //         setNewProduct({ name: '', description: '', price: '', stock: '' }); // Reset form fields
-    //     } catch (error) {
-    //         console.error('Error adding new product:', error);
-    //     }
-    // };
     const handleInsert = async () => {
         try {
             const response = await axios.post('http://localhost:5000/api/data/Products', newProduct);
-            console.log('New product added:', response.data);
-
-            // After successfully inserting, fetch the updated list of products
-            axios.get('http://localhost:5000/api/data/Products')
-                .then(response => {
-                    setProducts(response.data);  // Reload the products list
-                    setNewProduct({ name: '', description: '', price: '', stock: '' }); // Reset form fields
-                })
-                .catch(error => {
-                    console.error('Error fetching updated products:', error);
-                });
+            setProducts([...products, response.data]);
+            setNewProduct({ name: '', description: '', price: '', stock: '' });
         } catch (error) {
             console.error('Error adding new product:', error);
         }
     };
+
     return (
-        <div>
-            <h1>Product List</h1>
+        <div className="max-w-4xl mx-auto p-4">
+            <h1 className="text-3xl font-bold mb-4">Product List</h1>
 
             {/* Insert Product Form */}
-            <div style={{ marginBottom: '20px' }}>
-                <h2>Add New Product</h2>
+            <div className="mb-8 bg-gray-100 p-4 rounded-lg">
+                <h2 className="text-xl font-semibold mb-4">Add New Product</h2>
                 <form onSubmit={(e) => { e.preventDefault(); handleInsert(); }}>
-                    <div>
-                        <label>Name:</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Name:</label>
                         <input
+                            className="w-full p-2 border border-gray-300 rounded"
                             type="text"
                             name="name"
                             value={newProduct.name}
@@ -118,9 +89,10 @@ const ProductList = () => {
                             required
                         />
                     </div>
-                    <div>
-                        <label>Description:</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Description:</label>
                         <input
+                            className="w-full p-2 border border-gray-300 rounded"
                             type="text"
                             name="description"
                             value={newProduct.description}
@@ -128,9 +100,10 @@ const ProductList = () => {
                             required
                         />
                     </div>
-                    <div>
-                        <label>Price:</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Price:</label>
                         <input
+                            className="w-full p-2 border border-gray-300 rounded"
                             type="number"
                             name="price"
                             value={newProduct.price}
@@ -138,9 +111,10 @@ const ProductList = () => {
                             required
                         />
                     </div>
-                    <div>
-                        <label>Stock:</label>
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Stock:</label>
                         <input
+                            className="w-full p-2 border border-gray-300 rounded"
                             type="number"
                             name="stock"
                             value={newProduct.stock}
@@ -148,66 +122,86 @@ const ProductList = () => {
                             required
                         />
                     </div>
-                    <button type="submit">Add Product</button>
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" type="submit">
+                        Add Product
+                    </button>
                 </form>
             </div>
 
             {/* Product List */}
-            <ul>
+            <ul className="space-y-4">
                 {products.map(product => (
-                    <li key={product.id}>
-                        <h2>{product.name}</h2>
-                        <p>{product.description}</p>
-                        <p>Price: ${product.price}</p>
-                        <p>Stock: {product.stock}</p>
-                        <button onClick={() => handleEdit(product)}>Edit</button>
-                        <button onClick={() => handleDelete(product.id)}>Delete</button>
+                    <li key={product.id} className="bg-white p-4 shadow rounded-lg">
+                        <h2 className="text-lg font-semibold">{product.name}</h2>
+                        <p className="text-gray-600">{product.description}</p>
+                        <p className="text-gray-800">Price: ${product.price}</p>
+                        <p className="text-gray-800">Stock: {product.stock}</p>
+                        <div className="mt-4 space-x-2">
+                            <button
+                                className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                                onClick={() => handleEdit(product)}
+                            >
+                                Edit
+                            </button>
+                            <button
+                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                onClick={() => handleDelete(product.id)}
+                            >
+                                Delete
+                            </button>
+                        </div>
                     </li>
                 ))}
             </ul>
 
             {/* Edit Product Form */}
             {editProduct && (
-                <div style={{ marginTop: '20px' }}>
-                    <h2>Edit Product</h2>
+                <div className="mt-8 bg-gray-100 p-4 rounded-lg">
+                    <h2 className="text-xl font-semibold mb-4">Edit Product</h2>
                     <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
-                        <div>
-                            <label>Name:</label>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Name:</label>
                             <input
+                                className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
                                 value={updatedData.name}
                                 onChange={(e) => setUpdatedData({ ...updatedData, name: e.target.value })}
                                 required
                             />
                         </div>
-                        <div>
-                            <label>Description:</label>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Description:</label>
                             <input
+                                className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
                                 value={updatedData.description}
                                 onChange={(e) => setUpdatedData({ ...updatedData, description: e.target.value })}
                                 required
                             />
                         </div>
-                        <div>
-                            <label>Price:</label>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Price:</label>
                             <input
+                                className="w-full p-2 border border-gray-300 rounded"
                                 type="number"
                                 value={updatedData.price}
                                 onChange={(e) => setUpdatedData({ ...updatedData, price: e.target.value })}
                                 required
                             />
                         </div>
-                        <div>
-                            <label>Stock:</label>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Stock:</label>
                             <input
+                                className="w-full p-2 border border-gray-300 rounded"
                                 type="number"
                                 value={updatedData.stock}
                                 onChange={(e) => setUpdatedData({ ...updatedData, stock: e.target.value })}
                                 required
                             />
                         </div>
-                        <button type="submit">Update</button>
+                        <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" type="submit">
+                            Update Product
+                        </button>
                     </form>
                 </div>
             )}
