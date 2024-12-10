@@ -1,75 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const UserList = () => {
-    const [users, setUsers] = useState([]);
-    const [editUser, setEditUser] = useState(null);
+const ProductList = () => {
+    const [products, setProducts] = useState([]);
+    const [editProduct, setEditProduct] = useState(null);
     const [updatedData, setUpdatedData] = useState({
-        email: '',
-        password: '',
-        full_name: '',
-        date_of_birth: '',
-        // regis_date: '',
-        role: '',
-        status: ''
+        p_name: '',
+        p_description: '',
+        // p_status: '',
+        pc_id: '',
+        store_id: '',
+        storecat_name: ''
     });
 
-    const [newUser, setNewUser] = useState({
-        email: '',
-        password: '',
-        full_name: '',
-        date_of_birth: '',
-        // regis_date: '',
-        role: '',
-        status: ''
+    const [newProduct, setNewProduct] = useState({
+        p_name: '',
+        p_description: '',
+        // p_status: '',
+        pc_id: '',
+        store_id: '',
+        storecat_name: ''
     });
 
     useEffect(() => {
-        axios.get('http://localhost:5000/api/data/users')
-            .then(response => setUsers(response.data))
-            .catch(error => console.error('Error fetching users:', error));
+        axios.get('http://localhost:5000/api/data/products')
+            .then(response => setProducts(response.data))
+            .catch(error => console.error('Error fetching products:', error));
     }, []);
 
-    const handleEdit = (user) => {
-        setEditUser(user);
+    const handleEdit = (product) => {
+        setEditProduct(product);
         setUpdatedData({
-            email: user.email,
-            password: user.password,
-            full_name: user.full_name,
-            date_of_birth: user.date_of_birth,
-            role: user.role,
-            status: user.status
+            p_name: product.p_name,
+            p_description: product.p_description,
+            p_status: product.p_status,
+            pc_id: product.pc_id,
+            store_id: product.store_id,
+            storecat_name: product.storecat_name
         });
     };
 
     // Handle update action
     const handleUpdate = async () => {
         try {
-            const response = await axios.put(`http://localhost:5000/api/data/users/${editUser.users_id}`, updatedData);
-            console.log('User updated:', response.data);
-            setUsers(users.map(p => p.users_id === editUser.users_id ? { ...p, ...updatedData } : p));
-            setEditUser(null); // Close the edit form
+            const response = await axios.put(`http://localhost:5000/api/data/products/${editProduct.product_id}`, updatedData);
+            console.log('Product updated:', response.data);
+            alert('Product updated successfully');
+            setProducts(products.map(p => p.product_id === editProduct.product_id ? { ...p, ...updatedData } : p));
+            setEditProduct(null); // Close the edit form
         } catch (error) {
-            console.error('Error updating user:', error);
+            console.error('Error updating product:', error);
         }
     };
 
     // Handle delete action
-    const handleDelete = (users_id) => {
-        axios.delete(`http://localhost:5000/api/data/users/${users_id}`)
+    const handleDelete = (product_id) => {
+        axios.delete(`http://localhost:5000/api/data/products/${product_id}`)
             .then(response => {
-                alert('User deleted successfully');
-                setUsers(users.filter(user => user.users_id !== users_id));
+                alert('Product deleted successfully');
+                setProducts(products.filter(product => product.product_id !== product_id));
             })
             .catch(error => {
-                console.error('Error deleting users:', error);
-                alert('Failed to delete user');
+                console.error('Error deleting products:', error);
+                alert('Failed to delete product');
             });
     };
 
-    const handleNewUserChange = (e) => {
+    const handleNewProductChange = (e) => {
         const { name, value } = e.target;
-        setNewUser((prevState) => ({
+        setNewProduct((prevState) => ({
             ...prevState,
             [name]: value
         }));
@@ -77,199 +76,208 @@ const UserList = () => {
 
     const handleInsert = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/data/users', newUser);
-            console.log('New user added:', response.data);
+            const response = await axios.post('http://localhost:5000/api/data/products', newProduct);
+            console.log('New product added:', response.data);
+            alert('Product added successfully');
 
             // After successfully inserting, fetch the updated list of products
-            axios.get('http://localhost:5000/api/data/users')
+            axios.get('http://localhost:5000/api/data/products')
                 .then(response => {
-                    setUsers(response.data);  // Reload the products list
-                    setNewUser({ email: '', password: '', full_name: '', date_of_birth: '', role: '', status: '' }); // Reset form fields
+                    setProducts(response.data);  // Reload the products list
+                    setNewProduct({ 
+                        p_name: '',
+                        p_description: '',
+                        // p_status: '',
+                        pc_id: '',
+                        store_id: '',
+                        storecat_name: '' }); // Reset form fields
                 })
                 .catch(error => {
-                    console.error('Error fetching updated users:', error);
+                    console.error('Error fetching updated products:', error);
                 });
         } catch (error) {
-            console.error('Error adding new user:', error);
+            console.error('Error adding new product:', error);
         }
     };
 
     return (
         <div className="max-w-4xl mx-auto p-4">
 
-            {/* Insert User Form */}
+            {/* Insert Product Form */}
             <div className="mb-8 bg-gray-100 p-4 rounded-lg">
-                <h2 className="text-xl font-semibold mb-4">Add New User</h2>
+                <h2 className="text-xl font-semibold mb-4">Thêm Sản phẩm mới</h2>
                 <form onSubmit={(e) => { e.preventDefault(); handleInsert(); }}>
                     <div className="mb-4">
-                        <label className="block text-gray-700">Email:</label>
+                        <label className="block text-gray-700">Tên sản phẩm:</label>
                         <input
                             className="w-full p-2 border border-gray-300 rounded"
                             type="text"
-                            name="email"
-                            value={newUser.email}
-                            onChange={handleNewUserChange}
+                            name="p_name"
+                            value={newProduct.p_name}
+                            onChange={handleNewProductChange}
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700">Password:</label>
+                        <label className="block text-gray-700">Mô tả:</label>
                         <input
                             className="w-full p-2 border border-gray-300 rounded"
                             type="text"
-                            name="password"
-                            value={newUser.password}
-                            onChange={handleNewUserChange}
+                            name="p_description"
+                            value={newProduct.p_description}
+                            onChange={handleNewProductChange}
+                            // required
+                        />
+                    </div>
+                    {/* <div className="mb-4">
+                        <label className="block text-gray-700">Trạng thái:</label>
+                        <input
+                            className="w-full p-2 border border-gray-300 rounded"
+                            type="text"
+                            name="p_status"
+                            value={newProduct.p_status}
+                            onChange={handleNewProductChange}
+                            required
+                        />
+                    </div> */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700">ID Danh mục Sản phẩm:</label>
+                        <input
+                            className="w-full p-2 border border-gray-300 rounded"
+                            type="number"
+                            name="pc_id"
+                            value={newProduct.pc_id}
+                            onChange={handleNewProductChange}
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700">Full Name:</label>
+                        <label className="block text-gray-700">ID Cửa hàng:</label>
                         <input
                             className="w-full p-2 border border-gray-300 rounded"
-                            type="text"
-                            name="full_name"
-                            value={newUser.full_name}
-                            onChange={handleNewUserChange}
+                            type="number"
+                            name="store_id"
+                            value={newProduct.store_id}
+                            onChange={handleNewProductChange}
                             required
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-gray-700">DOB:</label>
+                        <label className="block text-gray-700">Tên Danh mục cửa hàng:</label>
                         <input
                             className="w-full p-2 border border-gray-300 rounded"
                             type="text"
-                            name="date_of_birth"
-                            value={newUser.date_of_birth}
-                            onChange={handleNewUserChange}
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Role:</label>
-                        <input
-                            className="w-full p-2 border border-gray-300 rounded"
-                            type="text"
-                            name="role"
-                            value={newUser.role}
-                            onChange={handleNewUserChange}
-                            required
-                        />
-                    </div>
-                    <div className="mb-4">
-                        <label className="block text-gray-700">Status:</label>
-                        <input
-                            className="w-full p-2 border border-gray-300 rounded"
-                            type="text"
-                            name="status"
-                            value={newUser.status}
-                            onChange={handleNewUserChange}
-                            required
+                            name="storecat_name"
+                            value={newProduct.storecat_name}
+                            onChange={handleNewProductChange}
+                            // required
                         />
                     </div>
                     <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" type="submit">
-                        Add User
+                        Thêm Sản phẩm
                     </button>
                 </form>
             </div>
 
-            {/* User List */}
-            <h1 className="text-3xl font-bold mb-4">User List</h1>
+            {/* Product List */}
+            <h1 className="text-3xl font-bold mb-4">Danh sách Sản phẩm</h1>
             <ul className="space-y-4">
-                {users.map(user => (
-                    <li key={user.users_id} className="bg-white p-4 shadow rounded-lg">
-                        <h2 className="text-lg font-semibold">Full Name: {user.full_name}</h2>
-                        <p className="text-gray-600">Email: {user.email}</p>
-                        <p className="text-gray-600">Password: {user.password}</p>
-                        <p className="text-gray-600">DOB: {user.date_of_birth}</p>
-                        <p className="text-gray-800">Registration Date: {user.regis_date}</p>
-                        <p className="text-gray-800">Role: {user.role}</p>
-                        <p className="text-gray-800">Status: {user.status}</p>
+                {products.map(product => (
+                    <li key={product.product_id} className="bg-white p-4 shadow rounded-lg">
+                        <h2 className="text-lg font-semibold">Tên Sản phẩm: {product.p_name}</h2>
+                        <p className="text-gray-600">Mô tả: {product.p_description}</p>
+                        <p className="text-gray-600">Ngày thêm: {product.p_date}</p>
+                        <p className="text-gray-600">Tổng số sao đánh giá: {product.p_totalstar}</p>
+                        <p className="text-gray-800">Tổng số lượt đánh giá: {product.p_totalreview}</p>
+                        <p className="text-gray-800">Trạng thái: {product.p_status}</p>
+                        <p className="text-gray-800">ID Danh mục Sản phẩm: {product.pc_id}</p>
+                        <p className="text-gray-800">ID Cửa hàng: {product.store_id}</p>
+                        <p className="text-gray-800">Tên Danh mục cửa hàng: {product.storecat_name}</p>
                         <div className="mt-4 space-x-2">
                             <button
                                 className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
-                                onClick={() => handleEdit(user)}
+                                onClick={() => handleEdit(product)}
                             >
-                                Edit
+                                Chỉnh sửa
                             </button>
                             <button
                                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                onClick={() => handleDelete(user.users_id)}
+                                onClick={() => handleDelete(product.product_id)}
                             >
-                                Delete
+                                Xoá
                             </button>
                         </div>
                     </li>
                 ))}
             </ul>
 
-            {/* Edit User Form */}
-            {editUser && (
+            {/* Edit Product Form */}
+            {editProduct && (
                 <div className="mt-8 bg-gray-100 p-4 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-4">Edit User</h2>
+                    <h2 className="text-xl font-semibold mb-4">Chỉnh sửa Sản phẩm</h2>
                     <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
                         <div className="mb-4">
-                            <label className="block text-gray-700">Full Name:</label>
+                            <label className="block text-gray-700">Tên Sản phẩm:</label>
                             <input
                                 className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
-                                value={updatedData.full_name}
-                                onChange={(e) => setUpdatedData({ ...updatedData, full_name: e.target.value })}
+                                value={updatedData.p_name}
+                                onChange={(e) => setUpdatedData({ ...updatedData, p_name: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">Email:</label>
+                            <label className="block text-gray-700">Mô tả:</label>
                             <input
                                 className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
-                                value={updatedData.email}
-                                onChange={(e) => setUpdatedData({ ...updatedData, email: e.target.value })}
+                                value={updatedData.p_description}
+                                onChange={(e) => setUpdatedData({ ...updatedData, p_description: e.target.value })}
+                                // required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700">Trạng thái:</label>
+                            <input
+                                className="w-full p-2 border border-gray-300 rounded"
+                                type="text"
+                                value={updatedData.p_status}
+                                onChange={(e) => setUpdatedData({ ...updatedData, p_status: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">Password:</label>
+                            <label className="block text-gray-700">ID Danh mục Sản phẩm:</label>
                             <input
                                 className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
-                                value={updatedData.password}
-                                onChange={(e) => setUpdatedData({ ...updatedData, password: e.target.value })}
+                                value={updatedData.pc_id}
+                                onChange={(e) => setUpdatedData({ ...updatedData, pc_id: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">DOB:</label>
+                            <label className="block text-gray-700">ID Cửa hàng::</label>
                             <input
                                 className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
-                                value={updatedData.date_of_birth}
-                                onChange={(e) => setUpdatedData({ ...updatedData, date_of_birth: e.target.value })}
+                                value={updatedData.store_id}
+                                onChange={(e) => setUpdatedData({ ...updatedData, store_id: e.target.value })}
                                 required
                             />
                         </div>
                         <div className="mb-4">
-                            <label className="block text-gray-700">Role:</label>
+                            <label className="block text-gray-700">Tên Danh mục cửa hàng:</label>
                             <input
                                 className="w-full p-2 border border-gray-300 rounded"
                                 type="text"
-                                value={updatedData.role}
-                                onChange={(e) => setUpdatedData({ ...updatedData, role: e.target.value })}
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700">Status:</label>
-                            <input
-                                className="w-full p-2 border border-gray-300 rounded"
-                                type="text"
-                                value={updatedData.status}
-                                onChange={(e) => setUpdatedData({ ...updatedData, status: e.target.value })}
-                                required
+                                value={updatedData.storecat_name}
+                                onChange={(e) => setUpdatedData({ ...updatedData, storecat_name: e.target.value })}
+                                // required
                             />
                         </div>
                         <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600" type="submit">
-                            Update User
+                            Cập nhật Sản phẩm
                         </button>
                     </form>
                 </div>
@@ -278,4 +286,4 @@ const UserList = () => {
     );
 };
 
-export default UserList;
+export default ProductList;
